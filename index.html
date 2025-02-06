@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borang Permohonan Pinjaman Komputer</title>
+    <link rel="manifest" href="manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+            .then(() => console.log("Service Worker Berjaya Didaftarkan"))
+            .catch(error => console.log("Service Worker Gagal", error));
+        }
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
+        }
+        .container {
+            max-width: 450px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin: auto;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            display: block;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .input-group button {
+            flex-shrink: 0;
+            padding: 10px;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .input-group button:hover {
+            background: #0056b3;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .button-group button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .submit-btn {
+            background: #28a745;
+            color: white;
+        }
+        .submit-btn:hover {
+            background: #218838;
+        }
+        .reset-btn {
+            background: #dc3545;
+            color: white;
+        }
+        .reset-btn:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 style="text-align: center;">Borang Pinjaman Komputer</h2>
+        <form id="loanForm">
+            <div class="input-group">
+                <input type="text" id="ukmper" placeholder="UKMPer" required>
+                <button type="button" onclick="searchUKMPer()">Cari</button>
+            </div>
+            <ul id="ukmperList"></ul>
+
+            <div class="input-group">
+                <input type="text" id="nama" placeholder="Nama" required>
+                <button type="button" onclick="searchNama()">Cari</button>
+            </div>
+            <ul id="namaList"></ul>
+
+            <input type="text" id="jawatan" placeholder="Jawatan" required>
+            <input type="text" id="ptj" placeholder="PTJ" required>
+            <input type="tel" id="telefon" placeholder="No Telefon" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="number" id="bilangan" placeholder="Bilangan Permohonan" required>
+            
+            <label for="fileUpload">Muat Naik Fail (Maksimum 50MB):</label>
+            <input type="file" id="fileUpload" accept="image/*, .pdf, .doc, .docx" onchange="validateFile()">
+            
+            <div class="button-group">
+                <button type="submit" class="submit-btn">Hantar Permohonan</button>
+                <button type="button" onclick="resetForm()" class="reset-btn">Hapuskan Rekod</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const sampleUKMPer = ["UKM123", "UKM456", "UKM789"];
+        const sampleNama = ["Ali", "Budi", "Chong"];
+
+        function searchUKMPer() {
+            let input = document.getElementById("ukmper").value.toLowerCase();
+            let list = document.getElementById("ukmperList");
+            list.innerHTML = "";
+            sampleUKMPer.forEach(item => {
+                if (item.toLowerCase().includes(input)) {
+                    let li = document.createElement("li");
+                    li.textContent = item;
+                    li.onclick = () => document.getElementById("ukmper").value = item;
+                    list.appendChild(li);
+                }
+            });
+        }
+
+        function searchNama() {
+            let input = document.getElementById("nama").value.toLowerCase();
+            let list = document.getElementById("namaList");
+            list.innerHTML = "";
+            sampleNama.forEach(item => {
+                if (item.toLowerCase().includes(input)) {
+                    let li = document.createElement("li");
+                    li.textContent = item;
+                    li.onclick = () => document.getElementById("nama").value = item;
+                    list.appendChild(li);
+                }
+            });
+        }
+
+        function validateFile() {
+            const fileInput = document.getElementById("fileUpload");
+            if (fileInput.files.length > 0) {
+                const fileSize = fileInput.files[0].size / 1024 / 1024;
+                if (fileSize > 50) {
+                    alert("Fail melebihi saiz maksimum 50MB!");
+                    fileInput.value = "";
+                }
+            }
+        }
+
+        function resetForm() {
+            document.getElementById("loanForm").reset();
+        }
+
+        document.getElementById("loanForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            alert("Permohonan telah dihantar!");
+        });
+    </script>
+</body>
+</html>
