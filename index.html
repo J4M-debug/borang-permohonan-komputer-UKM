@@ -83,6 +83,13 @@
         .reset-btn:hover {
             background: #c82333;
         }
+        .download-btn {
+            background: #ffc107;
+            color: black;
+        }
+        .download-btn:hover {
+            background: #e0a800;
+        }
     </style>
 </head>
 <body>
@@ -113,6 +120,7 @@
             <div class="button-group">
                 <button type="submit" class="submit-btn">Hantar Permohonan</button>
                 <button type="button" onclick="resetForm()" class="reset-btn">Hapuskan Rekod</button>
+                <button type="button" onclick="downloadCSV()" class="download-btn">Muat Turun Data</button>
             </div>
         </form>
     </div>
@@ -164,10 +172,19 @@
             document.getElementById("loanForm").reset();
         }
 
-        document.getElementById("loanForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-            alert("Permohonan telah dihantar!");
-        });
+        function downloadCSV() {
+            let data = [
+                ["UKMPer", "Nama", "Jawatan", "PTJ", "No Telefon", "Email", "Bilangan Permohonan"],
+                [document.getElementById("ukmper").value, document.getElementById("nama").value, document.getElementById("jawatan").value, document.getElementById("ptj").value, document.getElementById("telefon").value, document.getElementById("email").value, document.getElementById("bilangan").value]
+            ];
+            let csvContent = "data:text/csv;charset=utf-8," + data.map(e => e.join(",")).join("\n");
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "data_pinjaman.csv");
+            document.body.appendChild(link);
+            link.click();
+        }
     </script>
 </body>
 </html>
