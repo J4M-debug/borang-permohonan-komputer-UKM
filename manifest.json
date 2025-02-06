@@ -1,9 +1,10 @@
 {
-    "name": "Aplikasi Pinjaman Komputer",
-    "short_name": "PinjamanPC",
-    "start_url": "index.html",
+    "name": "Borang Permohonan Komputer UKM",
+    "short_name": "Permohonan Komputer UKM",
+    "description": "Aplikasi Permohonan Komputer UKM",
+    "start_url": "/index.html",
     "display": "standalone",
-    "background_color": "#ffffff",
+    "background_color": "#f4f4f4",
     "theme_color": "#007bff",
     "icons": [
         {
