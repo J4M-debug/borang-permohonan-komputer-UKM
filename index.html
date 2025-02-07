@@ -15,12 +15,12 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #ffffff;
+            background-color: #f4f4f4;
             margin: 20px;
         }
         .container {
-            max-width: 500px;
-            background: #f8f9fa;
+            max-width: 450px;
+            background: white;
             padding: 25px;
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -79,6 +79,10 @@
                 <button type="button" onclick="downloadCSV()" class="download-btn">Muat Turun Data</button>
             </div>
         </form>
+
+        <h3>Carian Rekod</h3>
+        <input type="text" id="searchInput" placeholder="Cari UKMPer atau Nama">
+        <button onclick="searchData()" class="submit-btn">Cari</button>
     </div>
 
     <script>
@@ -111,7 +115,22 @@
 
         function resetForm() {
             document.getElementById("loanForm").reset();
-            alert("Rekod telah dihapuskan.");
+            alert("Borang telah dikosongkan!");
+        }
+
+        function searchData() {
+            let keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+            let storedData = JSON.parse(localStorage.getItem("loanData")) || [];
+            let results = storedData.filter(record =>
+                record.ukmper.toLowerCase().includes(keyword) || record.nama.toLowerCase().includes(keyword)
+            );
+            
+            if (results.length > 0) {
+                alert("Rekod dijumpai!");
+                console.log(results);
+            } else {
+                alert("Rekod tidak dijumpai.");
+            }
         }
 
         function downloadCSV() {
@@ -131,7 +150,7 @@
             link.setAttribute("download", "data_pinjaman.csv");
             document.body.appendChild(link);
             link.click();
-            alert("Data berjaya dimuat turun!");
+            alert("Data telah dimuat turun!");
         }
     </script>
 </body>
