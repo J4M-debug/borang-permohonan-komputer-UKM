@@ -95,13 +95,32 @@
             let results = document.getElementById("searchResults");
             results.innerHTML = "";
             
+            let found = false;
             storedData.forEach(entry => {
                 if (entry.ukmper.toLowerCase().includes(keyword) || entry.nama.toLowerCase().includes(keyword)) {
                     let li = document.createElement("li");
                     li.textContent = `UKMPer: ${entry.ukmper}, Nama: ${entry.nama}, Jawatan: ${entry.jawatan}, PTJ: ${entry.ptj}, Telefon: ${entry.telefon}, Email: ${entry.email}, Bilangan: ${entry.bilangan}`;
                     results.appendChild(li);
+                    found = true;
                 }
             });
+            
+            if (found) {
+                alert("Rekod ditemui!");
+            } else {
+                alert("Tiada rekod yang sepadan.");
+            }
+        }
+
+        function resetForm() {
+            document.getElementById("loanForm").reset();
+            localStorage.removeItem("loanData");
+            document.getElementById("searchResults").innerHTML = "";
+            alert("Semua data telah dipadam!");
+        }
+
+        function saveData() {
+            alert("Permohonan berjaya disimpan!");
         }
     </script>
 </body>
