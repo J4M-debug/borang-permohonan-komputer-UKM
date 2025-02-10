@@ -58,6 +58,17 @@
         .reset-btn:hover { background: #c82333; }
         .download-btn { background: #ffc107; color: black; }
         .download-btn:hover { background: #e0a800; }
+        .search-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .search-result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 6px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -80,9 +91,13 @@
             </div>
         </form>
 
-        <h3>Carian Rekod</h3>
-        <input type="text" id="searchInput" placeholder="Cari UKMPer atau Nama">
-        <button onclick="searchData()" class="submit-btn">Cari</button>
+        <!-- Bahagian Carian -->
+        <div class="search-container">
+            <h3>Carian Rekod</h3>
+            <input type="text" id="searchInput" placeholder="Cari UKMper atau Nama">
+            <button onclick="searchData()">Cari</button>
+            <div id="searchResult" class="search-result"></div>
+        </div>
     </div>
 
     <script>
@@ -115,22 +130,7 @@
 
         function resetForm() {
             document.getElementById("loanForm").reset();
-            alert("Borang telah dikosongkan!");
-        }
-
-        function searchData() {
-            let keyword = document.getElementById("searchInput").value.trim().toLowerCase();
-            let storedData = JSON.parse(localStorage.getItem("loanData")) || [];
-            let results = storedData.filter(record =>
-                record.ukmper.toLowerCase().includes(keyword) || record.nama.toLowerCase().includes(keyword)
-            );
-            
-            if (results.length > 0) {
-                alert("Rekod dijumpai!");
-                console.log(results);
-            } else {
-                alert("Rekod tidak dijumpai.");
-            }
+            alert("Borang telah dikosongkan.");
         }
 
         function downloadCSV() {
@@ -150,7 +150,35 @@
             link.setAttribute("download", "data_pinjaman.csv");
             document.body.appendChild(link);
             link.click();
-            alert("Data telah dimuat turun!");
+        }
+
+        function searchData() {
+            let keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+            let storedData = JSON.parse(localStorage.getItem("loanData")) || [];
+            let searchResult = document.getElementById("searchResult");
+
+            let result = storedData.find(item => 
+                item.ukmper.toLowerCase().includes(keyword) || 
+                item.nama.toLowerCase().includes(keyword)
+            );
+
+            if (result) {
+                searchResult.innerHTML = `
+                    <strong>UKMPer:</strong> ${result.ukmper} <br>
+                    <strong>Nama:</strong> ${result.nama} <br>
+                    <strong>Jawatan:</strong> ${result.jawatan} <br>
+                    <strong>PTJ:</strong> ${result.ptj} <br>
+                    <strong>No Telefon:</strong> ${result.telefon} <br>
+                    <strong>Email:</strong> ${result.email} <br>
+                    <strong>Bilangan Permohonan:</strong> ${result.bilangan}
+                `;
+                searchResult.style.display = "block";
+                alert("Rekod dijumpai!");
+            } else {
+                searchResult.innerHTML = "Tiada rekod dijumpai.";
+                searchResult.style.display = "block";
+                alert("Tiada rekod dijumpai!");
+            }
         }
     </script>
 </body>
