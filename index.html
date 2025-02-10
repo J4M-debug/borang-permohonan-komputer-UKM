@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borang Permohonan Komputer UKM</title>
+    <link rel="manifest" href="manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+            .then(() => console.log("Service Worker Berjaya Didaftarkan"))
+            .catch(error => console.log("Service Worker Gagal", error));
+        }
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
+        }
+        .container {
+            max-width: 450px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin: auto;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            display: block;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .button-group button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .submit-btn { background: #28a745; color: white; }
+        .submit-btn:hover { background: #218838; }
+        .reset-btn { background: #dc3545; color: white; }
+        .reset-btn:hover { background: #c82333; }
+        .download-btn { background: #ffc107; color: black; }
+        .download-btn:hover { background: #e0a800; }
+        .search-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .search-result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 6px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 style="text-align: center;">Borang Permohonan Komputer UKM</h2>
+        <form id="loanForm">
+            <input type="text" id="ukmper" placeholder="UKMPer" required>
+            <input type="text" id="nama" placeholder="Nama" required>
+            <input type="text" id="jawatan" placeholder="Jawatan" required>
+            <input type="text" id="ptj" placeholder="PTJ" required>
+            <input type="tel" id="telefon" placeholder="No Telefon" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="number" id="bilangan" placeholder="Bilangan Permohonan" required>
+            <label for="fileUpload">Muat Naik Fail (Maksimum 50MB):</label>
+            <input type="file" id="fileUpload" accept="image/*, .pdf, .doc, .docx" onchange="validateFile()">
+            <div class="button-group">
+                <button type="button" onclick="saveData()" class="submit-btn">Hantar Permohonan</button>
+                <button type="button" onclick="resetForm()" class="reset-btn">Hapuskan Rekod</button>
+                <button type="button" onclick="downloadCSV()" class="download-btn">Muat Turun Data</button>
+            </div>
+        </form>
+
+        <!-- Bahagian Carian -->
+        <div class="search-container">
+            <h3>Carian Rekod</h3>
+            <input type="text" id="searchInput" placeholder="Cari UKMper atau Nama">
+            <button onclick="searchData()">Cari</button>
+            <div id="searchResult" class="search-result"></div>
+        </div>
+    </div>
+
+    <script>
+        function validateFile() {
+            const fileInput = document.getElementById("fileUpload");
+            if (fileInput.files.length > 0) {
+                const fileSize = fileInput.files[0].size / 1024 / 1024;
+                if (fileSize > 50) {
+                    alert("Fail melebihi saiz maksimum 50MB!");
+                    fileInput.value = "";
+                }
+            }
+        }
+
+        function saveData() {
+            let formData = {
+                ukmper: document.getElementById("ukmper").value,
+                nama: document.getElementById("nama").value,
+                jawatan: document.getElementById("jawatan").value,
+                ptj: document.getElementById("ptj").value,
+                telefon: document.getElementById("telefon").value,
+                email: document.getElementById("email").value,
+                bilangan: document.getElementById("bilangan").value
+            };
+            let storedData = JSON.parse(localStorage.getItem("loanData")) || [];
+            storedData.push(formData);
+            localStorage.setItem("loanData", JSON.stringify(storedData));
+            alert("Permohonan berjaya disimpan!");
+        }
+
+        function resetForm() {
+            document.getElementById("loanForm").reset();
+            alert("Borang telah dikosongkan.");
+        }
+
+        function downloadCSV() {
+            let storedData = JSON.parse(localStorage.getItem("loanData")) || [];
+            if (storedData.length === 0) {
+                alert("Tiada data untuk dimuat turun!");
+                return;
+            }
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "UKMPer,Nama,Jawatan,PTJ,No Telefon,Email,Bilangan Permohonan\n";
+            storedData.forEach(row => {
+                csvContent += `${row.ukmper},${row.nama},${row.jawatan},${row.ptj},${row.telefon},${row.email},${row.bilangan}\n`;
+            });
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "data_pinjaman.csv");
+            document.body.appendChild(link);
+            link.click();
+        }
+
+        function searchData() {
+            let keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+            let storedData = JSON.parse(localStorage.getItem("loanData")) || [];
+            let searchResult = document.getElementById("searchResult");
+
+            let result = storedData.find(item => 
+                item.ukmper.toLowerCase().includes(keyword) || 
+                item.nama.toLowerCase().includes(keyword)
+            );
+
+            if (result) {
+                searchResult.innerHTML = `
+                    <strong>UKMPer:</strong> ${result.ukmper} <br>
+                    <strong>Nama:</strong> ${result.nama} <br>
+                    <strong>Jawatan:</strong> ${result.jawatan} <br>
+                    <strong>PTJ:</strong> ${result.ptj} <br>
+                    <strong>No Telefon:</strong> ${result.telefon} <br>
+                    <strong>Email:</strong> ${result.email} <br>
+                    <strong>Bilangan Permohonan:</strong> ${result.bilangan}
+                `;
+                searchResult.style.display = "block";
+                alert("Rekod dijumpai!");
+            } else {
+                searchResult.innerHTML = "Tiada rekod dijumpai.";
+                searchResult.style.display = "block";
+                alert("Tiada rekod dijumpai!");
+            }
+        }
+    </script>
+</body>
+</html>
